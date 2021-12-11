@@ -1,0 +1,10 @@
+economy:tadamsa
+politics:tasertit
+technology:tatiknulujit
+litterature:tasekla
+society:timetti
+sport:addal
+health:tadawsa
+education:asegmi
+environment:tawennaḍt
+culture:idles
