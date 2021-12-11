@@ -9,7 +9,7 @@
 # Licence:     CCO
 #-------------------------------------------------------------------------------
 
-## This script creates text file for each article
+## This script creates text file for each article la dépèche de Kabylie
 ## Files are utf-8 encoded
 ## This script is for nlp use only
 ## This script can't be used on other websites. If this website is updated, it may not work
