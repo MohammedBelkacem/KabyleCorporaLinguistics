@@ -9,7 +9,7 @@
 # Licence:     CCO
 # -------------------------------------------------------------------------------
 
-## This script creates text file for each kabyle article found on aps https://www.aps.dz/tamazight-tal/
+## This script creates text file for each article
 ## Files are utf-8 encoded
 ## This script is for nlp use only
 ## This script can't be used on other websites. If this website is updated, it may not work
@@ -17,10 +17,11 @@
 
 from requests_html import HTMLSession
 import re
-
+import os
 import urllib3
 import time
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 categories = ['regions','sport', 'societe', 'culture',  'sante-science-technologie','algerie', 'economie', 'monde']
 taille = [192, 166, 144, 162,  138, 710, 232, 207]
@@ -60,17 +61,16 @@ def create_article(article, a):
     print (article)
     time.sleep(10)
     try:
-        r = session.get(article, verify=False,proxies={"http": "http://111.233.225.166:1234"})
+        if not os.path.isfile(str(a) + ".txt"):
+            r = session.get(article, verify=False,proxies={"http": "http://111.233.225.166:1234"})
+            about = r.html.find('p')
+            g = open(str(a) + ".txt", "w+", encoding='utf-8')
 
+            for i in about:
+                #print (remove_tags(i.html, TAG_RE))
 
-        about = r.html.find('p')
-        g = open(str(a) + ".txt", "w+", encoding='utf-8')
-
-        for i in about:
-            #print (remove_tags(i.html, TAG_RE))
-
-            g.write(remove_tags(i.html, TAG_RE) + '\n')
-        g.close()
+                g.write(remove_tags(i.html, TAG_RE) + '\n')
+            g.close()
     except:
         print(article)
 
@@ -82,31 +82,31 @@ def fetch_pages(max_pages, all_pages, categories, taille):
     a = 0
     for page in retreive_pages(categories, taille):
         time.sleep(10)
-        r = session.get(page, verify=False,proxies={"http": "http://111.233.225.166:1234"})
+        try:
+            r = session.get(page, verify=False,proxies={"http": "http://111.233.225.166:1234"})
 
-        about = r.html.find('a')
+            about = r.html.find('a')
 
 
-        for i in about:
+            for i in about:
 
-            if i.html.find('href="/tamazight-tal/algerie/') > 0 \
-                    or i.html.find('href="/tamazight-tal/economie/') > 0 \
-                    or i.html.find('href="/tamazight-tal/monde/') > 0 \
-                    or i.html.find('href="/tamazight-tal/sport/') > 0 \
-                    or i.html.find('href="/tamazight-tal/societe/') > 0 \
-                    or i.html.find('href="/tamazight-tal/culture/') > 0 \
-                    or i.html.find('href="/tamazight-tal/regions/') > 0 \
-                    or i.html.find('href="/tamazight-tal/sante-science-technologie/') > 0:  # and #i.html.find('rel="bookmark" class="td-image-wrap"') > 0:
+                if i.html.find('href="/tamazight-tal/algerie/') > 0 \
+                        or i.html.find('href="/tamazight-tal/economie/') > 0 \
+                        or i.html.find('href="/tamazight-tal/monde/') > 0 \
+                        or i.html.find('href="/tamazight-tal/sport/') > 0 \
+                        or i.html.find('href="/tamazight-tal/societe/') > 0 \
+                        or i.html.find('href="/tamazight-tal/culture/') > 0 \
+                        or i.html.find('href="/tamazight-tal/regions/') > 0 \
+                        or i.html.find('href="/tamazight-tal/sante-science-technologie/') > 0:  # and #i.html.find('rel="bookmark" class="td-image-wrap"') > 0:
 
-                j = i.html.split(' ')[1].split('"')[1]
-                if j not in articles:
-                    articles.append(j)
-                    create_article(j, a)
-                    a = a + 1
+                    j = i.html.split(' ')[1].split('"')[1]
+                    if j not in articles:
+                        articles.append(j)
+                        create_article(j, a)
+                        a = a + 1
 
-        nb_page = nb_page + 1
-        if nb_page == max_pages:
-            break
-
+            nb_page = nb_page + 1
+        except:
+            print(page)
 
 fetch_pages(max_pages, all_pages, categories, taille)
